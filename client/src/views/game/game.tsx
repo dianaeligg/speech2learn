@@ -1,25 +1,43 @@
 import React, { useEffect, useState } from "react";
 import API, { WordResponse } from "../../utils/API";
 import Word from "../../components/word";
-import ScrambledWord from "../../components/scrambled-word";
+import BoxedWord from "../../components/boxed-word";
 
 const Game = () => {
   const [word, setWord] = useState<string>("");
+  const [currentGuess, setCurrentGuess] = useState<string>("");
+  const [won, setWon] = useState<boolean>(false);
 
   useEffect(() => {
     init();
   }, []);
 
+  useEffect(() => {
+    checkCompleteWord();
+  }, [word, currentGuess]);
+
   const init = async () => {
     const wordRes = await API.getNewWord();
-    // console.log(wordRes.data);
     setWord(wordRes.data.word);
+  };
+
+  const handleGuess = (guessedLetter: string) => {
+    console.log(guessedLetter);
+    setCurrentGuess(currentGuess + guessedLetter);
+  };
+
+  const checkCompleteWord = () => {
+    setWon(false);
+    if (currentGuess === word) {
+      setWon(true);
+    }
   };
 
   return (
     <>
-      <Word word={word} />
-      <ScrambledWord word={word} />
+      {won && <span>You Win!</span>}
+      <Word word={word} guessedWord={currentGuess} />
+      <BoxedWord guessable={false} word={word} onLetterClick={handleGuess} />
     </>
   );
 };
