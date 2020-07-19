@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import API, { WordResponse } from "../../utils/API";
-import Word from "../../components/word";
 import BoxedWord from "../../components/boxed-word";
+import Button from "../../components/button";
+import Word from "../../components/word";
 
 const Game = () => {
   const [word, setWord] = useState<string>("");
@@ -26,6 +27,11 @@ const Game = () => {
     setCurrentGuess(currentGuess + guessedLetter);
   };
 
+  const handleUndo = () => {
+    console.log(currentGuess.substr(0, currentGuess.length - 1));
+    setCurrentGuess(currentGuess.substr(0, currentGuess.length - 1));
+  };
+
   const checkCompleteWord = () => {
     setWon(false);
     if (currentGuess === word) {
@@ -38,6 +44,7 @@ const Game = () => {
       {won && <span>You Win!</span>}
       <Word word={word} guessedWord={currentGuess} />
       <BoxedWord guessable={false} word={word} onLetterClick={handleGuess} />
+      <Button onClick={handleUndo} text="Undo" />
     </>
   );
 };
