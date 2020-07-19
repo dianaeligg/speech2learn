@@ -6,6 +6,7 @@ import BoxedWord from "../../components/boxed-word";
 import Button from "../../components/button";
 import Word from "../../components/word";
 import "./game.scss";
+import ToastLike from "../../components/toast-like";
 
 type scoreType = {
   right: number;
@@ -20,11 +21,17 @@ const Game = () => {
   const [won, setWon] = useState<boolean>(false);
   const [scrambledWord, setScrambledWord] = useState<string>("");
   const [score, setScore] = useState<scoreType>(INITIAL_SCORE);
+  const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
 
   const checkCompleteWord = useCallback(() => {
     setWon(false);
-    if (currentGuess === word) {
+    if (currentGuess === word && word !== "") {
       setWon(true);
+      setScore({ ...score, right: score.right + 1 });
+      setTimeout(() => {
+        setWon(false);
+        init();
+      }, 2000);
     }
   }, [currentGuess, word]);
 
@@ -70,23 +77,32 @@ const Game = () => {
   };
 
   const handleNewWord = () => {
+    setScore({ ...score, wrong: score.wrong + 1 });
     init();
   };
 
   return (
     <>
-      {won && <span>You Win!</span>}
-      <AudioButton onClick={speakWord} />
-      <Word word={word} guessedWord={currentGuess} />
-      <BoxedWord
-        guessable={false}
-        onLetterClick={handleGuess}
-        word={scrambledWord}
-      />
-      <div className="buttons">
-        <Button onClick={handleNewWord} text="New Word" />
-        <Button onClick={handleUndo} text="Undo" />
+      <div>
+        {score.right} / {score.right + score.wrong}
       </div>
+      {won && <ToastLike imageName={"checkmark.svg"} />}
+      {won || (
+        <>
+          <AudioButton onClick={speakWord} />
+          <Word word={word} guessedWord={currentGuess} />
+          <BoxedWord
+            guessable={false}
+            onLetterClick={handleGuess}
+            word={scrambledWord}
+          />
+          {showCheckmark && <ToastLike imageName={"checkmark.svg"} />}
+          <div className="buttons">
+            <Button onClick={handleNewWord} text="New Word" />
+            <Button onClick={handleUndo} text="Undo" />
+          </div>
+        </>
+      )}
     </>
   );
 };
