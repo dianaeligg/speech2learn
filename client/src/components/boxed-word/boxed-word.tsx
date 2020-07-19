@@ -19,7 +19,7 @@ const BoxedWord = ({
 
   useEffect(() => {
     setGuessed(word.split("").map((letter: string) => !guessable));
-  }, [word]);
+  }, [word, guessable]);
 
   return (
     <div className="boxed_word">
