@@ -5,12 +5,21 @@ import AudioButton from "../../components/audio-button";
 import BoxedWord from "../../components/boxed-word";
 import Button from "../../components/button";
 import Word from "../../components/word";
+import "./game.scss";
+
+type scoreType = {
+  right: number;
+  wrong: number;
+};
+
+const INITIAL_SCORE = { right: 0, wrong: 0 };
 
 const Game = () => {
   const [word, setWord] = useState<string>("");
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [won, setWon] = useState<boolean>(false);
   const [scrambledWord, setScrambledWord] = useState<string>("");
+  const [score, setScore] = useState<scoreType>(INITIAL_SCORE);
 
   const checkCompleteWord = useCallback(() => {
     setWon(false);
@@ -46,6 +55,7 @@ const Game = () => {
   }, [speakWord, word]);
 
   const init = async () => {
+    setCurrentGuess("");
     const wordRes = await API.getNewWord();
     setWord(wordRes.data.word);
     setScrambledWord(addLettersAndShuffle(wordRes.data.word, 12));
@@ -59,6 +69,10 @@ const Game = () => {
     setCurrentGuess(currentGuess.substr(0, currentGuess.length - 1));
   };
 
+  const handleNewWord = () => {
+    init();
+  };
+
   return (
     <>
       {won && <span>You Win!</span>}
@@ -69,7 +83,10 @@ const Game = () => {
         onLetterClick={handleGuess}
         word={scrambledWord}
       />
-      <Button onClick={handleUndo} text="Undo" />
+      <div className="buttons">
+        <Button onClick={handleNewWord} text="New Word" />
+        <Button onClick={handleUndo} text="Undo" />
+      </div>
     </>
   );
 };
