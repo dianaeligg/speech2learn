@@ -17,6 +17,20 @@ const Game = () => {
     checkCompleteWord();
   }, [word, currentGuess]);
 
+  useEffect(() => {
+    if (word) {
+      console.log("SAY", word);
+      var msg = new SpeechSynthesisUtterance(word);
+      msg.lang = "en-US";
+      const voices = window.speechSynthesis.getVoices();
+      setTimeout(() => {
+        const voices = window.speechSynthesis.getVoices();
+        msg.voice = voices[1];
+        window.speechSynthesis.speak(msg);
+      }, 1000);
+    }
+  }, [word]);
+
   const init = async () => {
     const wordRes = await API.getNewWord();
     setWord(wordRes.data.word);
