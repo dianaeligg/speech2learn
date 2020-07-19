@@ -9,7 +9,6 @@ type Props = {
 const Word = ({ guessedWord, word }: Props) => {
   return (
     <>
-      <div>{word}</div>
       <BoxedWord guessable={true} guessedWord={guessedWord} word={word} />
     </>
   );
