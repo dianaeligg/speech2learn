@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import API, { WordResponse } from "../../utils/API";
+import AudioButton from "../../components/audio-button";
 import BoxedWord from "../../components/boxed-word";
 import Button from "../../components/button";
 import Word from "../../components/word";
@@ -18,17 +19,7 @@ const Game = () => {
   }, [word, currentGuess]);
 
   useEffect(() => {
-    if (word) {
-      console.log("SAY", word);
-      var msg = new SpeechSynthesisUtterance(word);
-      msg.lang = "en-US";
-      const voices = window.speechSynthesis.getVoices();
-      setTimeout(() => {
-        const voices = window.speechSynthesis.getVoices();
-        msg.voice = voices[1];
-        window.speechSynthesis.speak(msg);
-      }, 1000);
-    }
+    speakWord();
   }, [word]);
 
   const init = async () => {
@@ -53,9 +44,25 @@ const Game = () => {
     }
   };
 
+  const speakWord = () => {
+    console.log("SAY", word);
+    if (word) {
+      var msg = new SpeechSynthesisUtterance(word);
+      msg.lang = "en-US";
+      const voices = window.speechSynthesis.getVoices();
+      setTimeout(() => {
+        // not sure why timeout or double voices is needed
+        var voices = window.speechSynthesis.getVoices();
+        msg.voice = voices[1];
+        window.speechSynthesis.speak(msg);
+      }, 1);
+    }
+  };
+
   return (
     <>
       {won && <span>You Win!</span>}
+      <AudioButton onClick={speakWord} />
       <Word word={word} guessedWord={currentGuess} />
       <BoxedWord guessable={false} word={word} onLetterClick={handleGuess} />
       <Button onClick={handleUndo} text="Undo" />
